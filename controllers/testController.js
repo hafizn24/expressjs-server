@@ -8,7 +8,17 @@ class TestController {
                 .select('*')
 
             if (error) {
-                throw error
+                return res.status(500).json({
+                    success: false,
+                    error: 'Database query failed'
+                })
+            }
+
+            if (!data) {
+                return res.status(404).json({
+                    success: false,
+                    error: 'No records found'
+                })
             }
 
             res.json({
@@ -18,8 +28,8 @@ class TestController {
             })
         } catch (error) {
             res.status(500).json({
-                sucess: false,
-                error: error.message
+                success: false,
+                error: 'Internal server error'
             })
         }
     }
