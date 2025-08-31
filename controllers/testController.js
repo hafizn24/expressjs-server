@@ -66,6 +66,39 @@ class TestController {
             })
         }
     }
+
+    static async deleteTest(req, res) {
+        try{
+            const {data: fetchData, error: fetchError} = await supabase
+                .from('test')
+                .select('id')
+                .order('created_at', { ascending: false })
+                .limit(1)
+
+            if(!fetchData){
+                return res.status(400).json({
+                    success: false,
+                    message: "No row found"
+                })
+            }
+            
+            const {error: deleteError} = await supabase
+                .from('test')
+                .delete()
+                .eq('id', fetchData[0].id)
+
+            res.status(200).json({
+                success: true,
+                message: "Data deleted"
+            })
+            
+        } catch (err) {
+            res.status(500).json({
+                success: false,
+                message: err.message
+            })
+        }
+    }
 }
 
 module.exports = TestController
