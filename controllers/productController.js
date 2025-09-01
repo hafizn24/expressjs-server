@@ -3,10 +3,18 @@ const supabase = require('../supabase')
 class ProductController {
     static async getProducts(req, res) {
         try {
-            const { data, error } = await supabase
+            const {id} = req.query
+
+            const sql = supabase
                 .from('product')
                 .select('*')
                 .order('id')
+            
+            if(id){
+                sql.eq('id', id)
+            }
+
+            const { data, error } = await sql
 
             if (error) {
                 return res.status(500).json({
