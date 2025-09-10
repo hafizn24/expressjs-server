@@ -4,8 +4,7 @@ const path = require('path');
 require('dotenv').config();
 
 const testRoute = require('./routes/testRoute')
-const productRoute = require('./routes/productRoute')
-const cartRoute = require('./routes/cartRoute')
+const staffRoute = require('./routes/staffRoute')
 
 const app = express();
 const PORT = process.env.PORT || 5050;
@@ -19,8 +18,7 @@ app.get('/api/health', (req, res) => {
 });
 
 app.use('/api/test', testRoute)
-app.use('/api/products', productRoute)
-app.use('/api/cart', cartRoute)
+app.use('/api/staff', staffRoute)
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
