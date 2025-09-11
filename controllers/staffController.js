@@ -122,7 +122,7 @@ class StaffController {
         try {
             const { id } = req.body
 
-            if (!data) {
+            if (!req.body) {
                 return res.status(400).json({
                     success: false,
                     message: 'Body request is empty'
@@ -136,6 +136,11 @@ class StaffController {
                     success: false,
                     message: 'Unable to delete',
                     error: error.message
+                })
+            } else {
+                res.status(200).json({
+                    success: true,
+                    message: "Succefully deleted"
                 })
             }
         } catch (error) {
