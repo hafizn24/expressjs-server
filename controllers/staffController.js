@@ -60,16 +60,18 @@ class StaffController {
                     staff_phone: request.phone
                 })
 
-            if (data) {
-                res.status(201).json({
-                    success: true,
-                    message: 'Data inserted'
-                })
-            } else {
+            console.log(error)
+
+            if (error) {
                 res.status(500).json({
                     success: false,
                     message: 'Unable to insert',
                     error: error.message
+                })
+            } else {
+                res.status(201).json({
+                    success: true,
+                    message: 'Data inserted'
                 })
             }
 
