@@ -54,10 +54,8 @@ class DepartmentController {
         try {
             const { data, error } = await supabase.from('departments')
                 .insert({
-                    staff_name: request.name,
-                    staff_role: request.role,
-                    staff_email: request.email,
-                    staff_phone: request.phone
+                    dept_name: request.name,
+                    dept_description: request.description,
                 })
 
             console.log(error)
