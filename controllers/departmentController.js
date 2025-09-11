@@ -58,8 +58,6 @@ class DepartmentController {
                     dept_description: request.description,
                 })
 
-            console.log(error)
-
             if (error) {
                 res.status(500).json({
                     success: false,

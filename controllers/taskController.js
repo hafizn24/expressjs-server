@@ -1,10 +1,10 @@
 const supabase = require('../supabase')
-
-class StaffController {
-    static async getStaff(req, res) {
+/** Incomplete */
+class TaskController {
+    static async getTask(req, res) {
         try {
             const { id } = req.query
-            const sql = supabase.from('staff').select('*').order('id')
+            const sql = supabase.from('tasks').select('*').order('id')
 
             if (id) {
                 sql.eq('id', id)
@@ -41,7 +41,7 @@ class StaffController {
         }
     }
 
-    static async insertStaff(req, res) {
+    static async insertTask(req, res) {
         const request = req.body
 
         if (!request) {
@@ -54,10 +54,9 @@ class StaffController {
         try {
             const { data, error } = await supabase.from('staff')
                 .insert({
-                    staff_name: request.name,
-                    staff_role: request.role,
-                    staff_email: request.email,
-                    staff_phone: request.phone
+                    tasks_title: request.title,
+                    tasks_description: request.description,
+                    sd_id: request.sd_id
                 })
 
             if (error) {
@@ -151,4 +150,4 @@ class StaffController {
     }
 }
 
-module.exports = StaffController
+module.exports = TaskController
