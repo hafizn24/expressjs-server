@@ -27,25 +27,24 @@ class StaffController {
             if (error) {
                 res.status(500).json({
                     success: false,
-                    message: 'Query failed'
+                    message: 'Query failed',
+                    error: error.message
                 })
             }
 
         } catch (error) {
             res.status(500).json({
                 success: false,
-                message: 'Internal server error'
+                message: 'Internal server error',
+                error: error.message
             })
         }
     }
 
-    /**
-     * Working In Progress
-     */
     static async insertStaff(req, res) {
-        const data = req.body
+        const request = req.body
 
-        if (!data) {
+        if (!request) {
             return res.status(400).json({
                 success: false,
                 message: 'Input not available'
@@ -55,10 +54,10 @@ class StaffController {
         try {
             const { data, error } = await supabase.from('staff')
                 .insert({
-                    staff_name: data.name,
-                    staff_role: data.role,
-                    staff_email: data.email,
-                    staff_phone: data.phone
+                    staff_name: request.name,
+                    staff_role: request.role,
+                    staff_email: request.email,
+                    staff_phone: request.phone
                 })
 
             if (data) {
@@ -66,12 +65,19 @@ class StaffController {
                     success: true,
                     message: 'Data inserted'
                 })
+            } else {
+                res.status(500).json({
+                    success: false,
+                    message: 'Unable to insert',
+                    error: error.message
+                })
             }
 
         } catch (error) {
             res.status(500).json({
                 success: false,
-                message: 'Internal server error'
+                message: 'Internal server error',
+                error: error.message
             })
         }
     }
@@ -104,7 +110,8 @@ class StaffController {
         } catch (error) {
             res.status(500).json({
                 success: false,
-                message: 'Internal server error'
+                message: 'Internal server error',
+                error: error.message
             })
         }
     }
@@ -122,10 +129,18 @@ class StaffController {
 
             const { error } = await supabase.from('staff').delete().eq('id', id)
 
+            if (error) {
+                res.status(500).json({
+                    success: false,
+                    message: 'Unable to delete',
+                    error: error.message
+                })
+            }
         } catch (error) {
             res.status(500).json({
                 success: false,
-                message: 'Internal server error'
+                message: 'Internal server error',
+                error: error.message
             })
         }
     }
