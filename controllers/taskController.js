@@ -52,7 +52,17 @@ class TaskController {
         }
 
         try {
-            const { data, error } = await supabase.from('staff')
+            const { data: sdData, error: sdError } = await supabase.from('staff_departments').select('id').eq("id", request.sd_id)
+
+            if (sdError) {
+                res.status(500).json({
+                    success: false,
+                    message: 'sd id N/A',
+                    error: error.message
+                })
+            }
+
+            const { data, error } = await supabase.from('tasks')
                 .insert({
                     tasks_title: request.title,
                     tasks_description: request.description,
@@ -81,18 +91,27 @@ class TaskController {
         }
     }
 
-    static async updateStaff(req, res) {
+    static async updateTask(req, res) {
         try {
             const id = req.params.id
-            const { name, role, email, phone } = req.body
+            const { title, description, sd_id } = req.body
             const updates = {}
 
-            if (name) updates.staff_name = name
-            if (role) updates.staff_role = role
-            if (email) updates.staff_email = email
-            if (phone) updates.staff_phone = phone
+            if (title) updates.tasks_title = title
+            if (description) updates.tasks_description = description
+            if (sd_id) updates.sd_id = sd_id
 
-            const { data, error } = await supabase.from('staff').update(updates).eq('id', id).select()
+            const { data: sdData, error: sdError } = await supabase.from('staff_departments').select('id').eq("id", request.sd_id)
+
+            if (sdError) {
+                res.status(500).json({
+                    success: false,
+                    message: 'sd id N/A',
+                    error: error.message
+                })
+            }
+
+            const { data, error } = await supabase.from('tasks').update(updates).eq('id', id).select()
 
             if (error) {
                 res.status(500).json({
@@ -115,7 +134,7 @@ class TaskController {
         }
     }
 
-    static async deleteStaff(req, res) {
+    static async deleteTask(req, res) {
         try {
             const { id } = req.body
 
@@ -126,7 +145,7 @@ class TaskController {
                 })
             }
 
-            const { error } = await supabase.from('staff').delete().eq('id', id)
+            const { error } = await supabase.from('tasks').delete().eq('id', id)
 
             if (error) {
                 res.status(500).json({
