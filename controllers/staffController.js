@@ -39,6 +39,9 @@ class StaffController {
         }
     }
 
+    /**
+     * Working In Progress
+     */
     static async insertStaff(req, res) {
         const data = req.body
 
@@ -79,17 +82,18 @@ class StaffController {
             const { name, role, email, phone } = req.body
             const updates = {}
 
-            if (name) updates.name = name
-            if (role) updates.role = role
-            if (email) updates.email = email
-            if (phone) updates.phone = phone
+            if (name) updates.staff_name = name
+            if (role) updates.staff_role = role
+            if (email) updates.staff_email = email
+            if (phone) updates.staff_phone = phone
 
             const { data, error } = await supabase.from('staff').update(updates).eq('id', id).select()
 
             if (error) {
                 res.status(500).json({
                     success: false,
-                    message: 'Unable to update'
+                    message: 'Unable to update',
+                    error: error.message
                 })
             } else {
                 res.status(200).json({
