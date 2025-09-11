@@ -1,5 +1,5 @@
 const supabase = require('../supabase')
-/** Incomplete */
+
 class TaskController {
     static async getTask(req, res) {
         try {
