@@ -15,7 +15,7 @@ app.use(cors());
 app.use(express.json());
 
 // API routes
-app.get('/api/health', (req, res) => {
+app.get('/api/', (req, res) => {
   res.json({ message: 'Serverless server is running! 🚀' });
 });
 
