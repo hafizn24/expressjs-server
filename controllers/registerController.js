@@ -5,28 +5,55 @@ class RegisterController {
         const { user, location, invitation, contact } = req.body;
 
         try {
-            const { data: userData, error: userError } = await supabase.from('users').insert([user]).select('*').single();
-            const { data: locData } = await supabase.from('locations').insert([location]).select('*').single();
+            const { data, error } = await supabase.rpc('register_invitation', {
+                user_email: user.user_email,
+                user_phone: user.user_phone,
+                user_name: user.user_name,
+                theme_id: user.theme_id,
 
-            const invitationPayload = {
-                ...invitation,
-                user_id: userData.user_id,
-                location_id: locData.loc_id,
-            };
-            const { data: invData } = await supabase.from('invitations').insert([invitationPayload]).select('*').single();
+                loc_name: location.loc_name,
+                loc_address1: location.loc_address1,
+                loc_address2: location.loc_address2,
+                loc_postcode: location.loc_postcode,
+                loc_city: location.loc_city,
+                loc_state: location.loc_state,
+                loc_google_maps_url: location.loc_google_maps_url || '',
+                loc_waze_url: location.loc_waze_url || '',
 
-            const contactPayload = {
-                ...contact,
-                inv_id: invData.inv_id,
-            };
-            await supabase.from('contacts').insert([contactPayload]);
+                inv_title: invitation.inv_title,
+                inv_bride_name: invitation.inv_bride_name,
+                inv_groom_name: invitation.inv_groom_name,
+                inv_date: invitation.inv_date,
+                inv_start_time: invitation.inv_start_time,
+                inv_end_time: invitation.inv_end_time,
+                inv_background_top: invitation.inv_background_top || '',
+                inv_background_bottom: invitation.inv_background_bottom || '',
+                inv_custom_message: invitation.inv_custom_message,
 
-            res.json({ success: true, user_id: userData.user_id, inv_id: invData.inv_id });
-        } catch (error) {
-            console.error('Insert error:', error);
+                contact_name: contact.contact_name,
+                contact_phone_number: contact.contact_phone_number,
+                contact_role: contact.contact_role,
+            });
+
+            if (error) {
+                console.error('RPC error:', error);
+                return res.status(500).json({
+                    error: 'Registration failed',
+                    message: error.message,
+                });
+            }
+
+            res.json({
+                success: true,
+                user_id: data.user_id,
+                loc_id: data.loc_id,
+                inv_id: data.inv_id,
+            });
+        } catch (err) {
+            console.error('Unexpected error:', err);
             res.status(500).json({
-                error: 'Insert failed',
-                message: error.message,
+                error: 'Unexpected failure',
+                message: err.message,
             });
         }
     }
