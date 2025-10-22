@@ -1,8 +1,9 @@
+const gemma = require('../../gemma')
 const { GoogleGenAI } = require('@google/genai');
 
 class GemmaController {
     constructor() {
-        this.ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_API_KEY });
+        this.ai = new GoogleGenAI({ apiKey: gemma });
     }
 
     setChat = async (req, res) => {
