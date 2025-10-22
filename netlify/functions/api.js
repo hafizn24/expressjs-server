@@ -5,6 +5,7 @@ require('dotenv').config();
 
 const testRoute = require('../../routes/testRoute');
 const registerRoute = require('../../routes/registerRoute');
+const gemmaRoute = require('../../routes/gemma/gemmaRoute')
 
 const app = express();
 
@@ -18,5 +19,6 @@ app.get('/api/', (req, res) => {
 
 app.use('/api/test', testRoute);
 app.use('/api/register', registerRoute);
+app.use('/api/chat', gemmaRoute)
 
 module.exports.handler = serverless(app);
