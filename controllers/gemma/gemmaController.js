@@ -12,7 +12,7 @@ class GemmaController {
 
             const response = await this.ai.models.generateContent({
                 model: 'gemma-3-27b-it',
-                contents: `Short answer only.\n${message}`,
+                contents: `Be concise and precise.\n${message}`,
             });
 
             res.json({ response: response.text });
