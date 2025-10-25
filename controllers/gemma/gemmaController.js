@@ -90,6 +90,18 @@ class GemmaController {
     }
 
     setChat = async (req, res) => {
+        if (event.httpMethod === 'OPTIONS') {
+            return {
+                statusCode: 200,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers': 'Content-Type',
+                    'Access-Control-Allow-Methods': 'POST, OPTIONS'
+                },
+                body: ''
+            };
+        }
+
         try {
             const { message, sessionId } = req.body;
 
@@ -105,7 +117,7 @@ class GemmaController {
             if (useWikipedia) {
                 // Extract search query
                 const searchQuery = await this.extractSearchQuery(message);
-                
+
                 // Search Wikipedia
                 wikipediaData = await this.searchWikipedia(searchQuery);
 
