@@ -1,12 +1,11 @@
 const gemma = require('../../gemma');
 const { GoogleGenAI } = require('@google/genai');
 const axios = require('axios');
-const { decisionPrompt, extractPrompt, finalPrompt } = require('./prompts'); // Import prompts
+const { decisionPrompt, extractPrompt, finalPrompt } = require('./prompts.js'); // Import prompts
 
 class GemmaController {
     constructor() {
         this.ai = new GoogleGenAI({ apiKey: gemma });
-        this.conversationHistory = new Map();
     }
 
     // Check if Wikipedia should be used
@@ -90,18 +89,6 @@ class GemmaController {
     }
 
     setChat = async (req, res) => {
-        if (event.httpMethod === 'OPTIONS') {
-            return {
-                statusCode: 200,
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Headers': 'Content-Type',
-                    'Access-Control-Allow-Methods': 'POST, OPTIONS'
-                },
-                body: ''
-            };
-        }
-
         try {
             const { message, sessionId } = req.body;
 
