@@ -1,6 +1,5 @@
-// Option 1: Using template literals with functions
-export const decisionPrompt = (message) => 
-`Analyze this user query and determine if Wikipedia search is needed.
+const decisionPrompt = (message) =>
+    `Analyze this user query and determine if Wikipedia search is needed.
 Query: "${message}"
 Respond with ONLY 'YES' or 'NO' based on these criteria:
 Use Wikipedia (YES) if:
@@ -19,13 +18,13 @@ Don't use Wikipedia (NO) if:
 
 Decision (YES or NO):`;
 
-export const extractPrompt = (message) => 
-`Extract the main topic or subject from this query that should be searched on Wikipedia. Return ONLY the search term, nothing else.
+const extractPrompt = (message) =>
+    `Extract the main topic or subject from this query that should be searched on Wikipedia. Return ONLY the search term, nothing else.
 Query: "${message}"
 Search term:`;
 
-export const finalPrompt = (message, title, summary) => 
-`Please keep the answer short and concise.
+const finalPrompt = (message, title, summary) =>
+    `Please keep the answer short and concise.
 
 User query: ${message}
 
@@ -35,7 +34,7 @@ ${summary}
 Based on this Wikipedia information, answer the user's query:`;
 
 // Option 2: Using regular functions (more explicit)
-export function getDecisionPrompt(message) {
+function getDecisionPrompt(message) {
     return `Analyze this user query and determine if Wikipedia search is needed.
 
 Query: "${message}"
@@ -59,21 +58,8 @@ Don't use Wikipedia (NO) if:
 Decision (YES or NO):`;
 }
 
-export function getExtractPrompt(message) {
-    return `Extract the main topic or subject from this query that should be searched on Wikipedia. Return ONLY the search term, nothing else.
-
-Query: "${message}"
-
-Search term:`;
-}
-
-export function getFinalPrompt(message, title, summary) {
-    return `Please keep the answer short and concise.
-
-User query: ${message}
-
-Wikipedia information about "${title}":
-${summary}
-
-Based on this Wikipedia information, answer the user's query:`;
-}
+module.exports = {
+    decisionPrompt,
+    extractPrompt,
+    finalPrompt
+};
