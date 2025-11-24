@@ -90,42 +90,83 @@ class GemmaController {
 
     setChat = async (req, res) => {
         try {
-            const { message, sessionId } = req.body;
+            const { message } = req.body;
+            const files = req.files || [];
 
-            if (!message) {
-                return res.status(400).json({ error: 'Message is required' });
+            if (!message && files.length === 0) {
+                return res.status(400).json({ error: 'Message or images are required' });
             }
 
-            // Check if Wikipedia should be used
-            const useWikipedia = await this.shouldUseWikipedia(message);
             let prompt = `Please keep the answer short and concise.\n${message}`;
+            let useWikipedia = false;
             let wikipediaData = null;
 
-            if (useWikipedia) {
-                // Extract search query
-                const searchQuery = await this.extractSearchQuery(message);
+            // Check if Wikipedia should be used (only if message exists and no images)
+            if (message && files.length === 0) {
+                useWikipedia = await this.shouldUseWikipedia(message);
+                
+                if (useWikipedia) {
+                    // Extract search query
+                    const searchQuery = await this.extractSearchQuery(message);
 
-                // Search Wikipedia
-                wikipediaData = await this.searchWikipedia(searchQuery);
+                    // Search Wikipedia
+                    wikipediaData = await this.searchWikipedia(searchQuery);
 
-                if (wikipediaData) {
-                    // Use the finalPrompt function
-                    prompt = finalPrompt(message, wikipediaData.title, wikipediaData.summary);
-                } else {
-                    prompt = `Please keep the answer short and concise. User query: ${message} Note: No Wikipedia results were found for this query. Answer based on your general knowledge:`;
+                    if (wikipediaData) {
+                        // Use the finalPrompt function
+                        prompt = finalPrompt(message, wikipediaData.title, wikipediaData.summary);
+                    } else {
+                        prompt = `Please keep the answer short and concise. User query: ${message} Note: No Wikipedia results were found for this query. Answer based on your general knowledge:`;
+                    }
+                }
+            }
+
+            // Process images if present
+            const contents = [];
+            
+            // Add text to contents
+            if (message) {
+                contents.push({
+                    role: 'user',
+                    parts: [{ text: prompt }]
+                });
+            }
+
+            // Add images to contents
+            for (const file of files) {
+                try {
+                    const base64Image = file.buffer.toString('base64');
+                    
+                    // Determine MIME type
+                    const mimeType = file.mimetype || 'image/jpeg';
+
+                    contents.push({
+                        role: 'user',
+                        parts: [
+                            {
+                                inlineData: {
+                                    mimeType: mimeType,
+                                    data: base64Image
+                                }
+                            }
+                        ]
+                    });
+                } catch (error) {
+                    console.error('Error processing image:', error);
                 }
             }
 
             // Generate response
             const response = await this.ai.models.generateContent({
                 model: 'gemma-3-27b-it',
-                contents: prompt,
+                contents: contents.length > 0 ? contents : prompt,
             });
 
             // Prepare response
             const responseData = {
                 response: response.text,
                 usedWikipedia: useWikipedia,
+                processedImages: files.length,
             };
 
             if (wikipediaData) {
